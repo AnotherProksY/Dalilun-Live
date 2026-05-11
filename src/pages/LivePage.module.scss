@@ -1,0 +1,25 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: #030303;
+
+  @media (max-width: 767px) {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    overflow: visible;
+  }
+}
