@@ -10,7 +10,10 @@ export function LiveHeader() {
     <header className={styles.root}>
       <div className={styles.bar}>
         <a href='/' className={styles.logoLink} aria-label='Dalilun'>
-          <Icon id='logo' width={159} height={36} viewBox='0 0 159 36' className={styles.logo} />
+          <span className={styles.logoWrapper}>
+            <Icon id='logo' width={159} height={36} viewBox='0 0 159 36' className={styles.logo} />
+            <span className={styles.livePing} aria-hidden='true' />
+          </span>
         </a>
         <CtaButton href='/' className={styles.ctaButton}>{t('live.aboutProject')}</CtaButton>
       </div>
