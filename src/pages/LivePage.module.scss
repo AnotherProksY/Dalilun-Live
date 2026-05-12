@@ -39,3 +39,10 @@
     gap: 16px;
   }
 }
+
+/* Только колонка + без дуа: плеер по вертикали по центру доступной области */
+.mainSoloMobile {
+  @media (max-width: 1023px) {
+    justify-content: center;
+  }
+}

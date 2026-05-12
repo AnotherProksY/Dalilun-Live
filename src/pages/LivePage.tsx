@@ -6,6 +6,9 @@ import { Container } from '@/components/UI/Container/Container'
 import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import styles from './LivePage.module.scss'
 
+/** false — скрыть блок субтитров на странице, true — показать */
+const LIVE_PAGE_SHOW_DUAS = false
+
 export function LivePage() {
   const { t, i18n } = useTranslation()
 
@@ -16,9 +19,15 @@ export function LivePage() {
   return (
     <MainLayout>
       <div className={styles.page}>
-        <Container className={styles.main}>
+        <Container
+          className={
+            LIVE_PAGE_SHOW_DUAS
+              ? styles.main
+              : `${styles.main} ${styles.mainSoloMobile}`
+          }
+        >
           <LivePlayer />
-          <LiveDuas />
+          {LIVE_PAGE_SHOW_DUAS && <LiveDuas />}
         </Container>
       </div>
     </MainLayout>
