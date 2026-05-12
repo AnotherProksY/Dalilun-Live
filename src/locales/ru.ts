@@ -6,6 +6,7 @@ const ru = {
       title: 'Выберите язык',
       confirm: 'Подтвердить',
     },
+    audioUnlock: 'Включить аудио',
   },
   footer: {
     privacy: 'Политика конфиденциальности',

@@ -6,6 +6,7 @@ const tt = {
       title: 'Телне сайлагыз',
       confirm: 'Раслагыз',
     },
+    audioUnlock: 'Тавышны ачу',
   },
   footer: {
     privacy: 'Конфиденциальлек сәясәте',

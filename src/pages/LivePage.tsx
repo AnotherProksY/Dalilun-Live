@@ -7,7 +7,7 @@ import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import styles from './LivePage.module.scss'
 
 /** false — скрыть блок субтитров на странице, true — показать */
-const LIVE_PAGE_SHOW_DUAS = false
+const LIVE_PAGE_SHOW_DUAS = true
 
 export function LivePage() {
   const { t, i18n } = useTranslation()

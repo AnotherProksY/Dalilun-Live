@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '@/components/UI/Icon/Icon'
 import { LanguageModal } from '@/components/LanguageModal/LanguageModal'
-import { DUAS } from '@/data/duas'
+import { useTranslationPoll } from '@/hooks/useTranslationPoll'
 import styles from './LiveDuas.module.scss'
 
 const LANGUAGES = [
@@ -11,15 +11,8 @@ const LANGUAGES = [
   { code: 'tt', label: 'Татарча' },
 ]
 
-type Lang = 'ru' | 'en' | 'tt'
-
 export function LiveDuas() {
   const { t, i18n } = useTranslation()
-
-  const lang =
-    (i18n.language as Lang) in { ru: 1, en: 1, tt: 1 }
-      ? (i18n.language as Lang)
-      : 'ru'
 
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
@@ -28,18 +21,22 @@ export function LiveDuas() {
     () => typeof window !== 'undefined' && window.innerWidth < 768,
   )
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const agentId = LANGUAGES.find((l) => l.code === i18n.language)
+    ? i18n.language
+    : 'ru'
+
+  const { text, active, audioUnlocked, unlockAudio } = useTranslationPoll(agentId)
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768)
-
     window.addEventListener('resize', onResize, { passive: true })
-
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
   useEffect(() => {
     if (!dropdownOpen) return
-
     const onOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -48,11 +45,16 @@ export function LiveDuas() {
         setDropdownOpen(false)
       }
     }
-
     document.addEventListener('mousedown', onOutside)
-
     return () => document.removeEventListener('mousedown', onOutside)
   }, [dropdownOpen])
+
+  // Auto-scroll to bottom when new text arrives
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [text])
 
   const currentLang =
     LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[1]
@@ -60,7 +62,6 @@ export function LiveDuas() {
   const handleLangClick = () => {
     if (isMobile) {
       setPendingLang(i18n.language)
-
       setModalOpen(true)
     } else {
       setDropdownOpen((v) => !v)
@@ -69,13 +70,11 @@ export function LiveDuas() {
 
   const handleDesktopSelect = (code: string) => {
     void i18n.changeLanguage(code)
-
     setDropdownOpen(false)
   }
 
   const handleModalConfirm = () => {
     void i18n.changeLanguage(pendingLang)
-
     setModalOpen(false)
   }
 
@@ -90,7 +89,6 @@ export function LiveDuas() {
               onClick={handleLangClick}
             >
               {currentLang.label}
-
               <Icon
                 id='chevron'
                 width={16}
@@ -122,23 +120,29 @@ export function LiveDuas() {
           </div>
         </div>
 
-        <div className={styles.listShell}>
-          <div className={styles.listScroll}>
-            <ul className={styles.list}>
-              {DUAS.map((dua) => (
-                <li key={dua.id} className={styles.item}>
-                  <p className={styles.arabic} dir='rtl'>
-                    {dua.arabic}
-                  </p>
-                  <p className={styles.transliteration}>
-                    {dua.transliteration}
-                  </p>
-                  <p className={styles.translation}>{dua[lang]}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className={styles.textShell} ref={scrollRef}>
+          {active ? (
+            <p className={styles.translationText}>{text}</p>
+          ) : (
+            <p className={styles.placeholder}>
+              <span className={styles.dot} />
+              <span className={styles.dot} />
+              <span className={styles.dot} />
+            </p>
+          )}
         </div>
+
+        {!audioUnlocked && (
+          <div className={styles.audioBar}>
+            <button
+              type='button'
+              className={styles.audioUnlockBtn}
+              onClick={unlockAudio}
+            >
+              {t('live.audioUnlock')}
+            </button>
+          </div>
+        )}
       </div>
 
       {modalOpen && (

@@ -6,6 +6,7 @@ const en = {
       title: 'Choose a language',
       confirm: 'Confirm',
     },
+    audioUnlock: 'Enable audio',
   },
   footer: {
     privacy: 'Privacy Policy',
