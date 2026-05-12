@@ -9,6 +9,12 @@
   padding: 20px;
 }
 
+.overlayBottomSheet {
+  align-items: flex-end;
+  justify-content: stretch;
+  padding: 0;
+}
+
 .modal {
   background: #1a1a1a;
   border-radius: 16px;
@@ -17,11 +23,23 @@
   overflow: hidden;
 }
 
+.modalBottomSheet {
+  max-width: none;
+  width: 100%;
+  border-radius: 20px 20px 0 0;
+  padding: 24px 16px;
+  background: #2e2e2e;
+}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 20px 20px 12px;
+
+  .modalBottomSheet & {
+    padding: 0;
+  }
 }
 
 .title {
@@ -29,6 +47,11 @@
   font-size: 16px;
   font-weight: 500;
   color: #fff;
+
+  .modalBottomSheet & {
+    font-size: 20px;
+    font-weight: 500;
+  }
 }
 
 .closeBtn {
@@ -39,17 +62,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #fff;
-  }
 }
 
 .list {
   list-style: none;
   padding: 0 12px;
+  margin: 0;
+
+  .modalBottomSheet & {
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 .item {
@@ -69,12 +94,25 @@
   transition: background 0.15s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: linear-gradient(90deg, #243d2b 0%, #1f3e27 100%);
+  }
+
+  .modalBottomSheet & {
+    padding: 26px 24px;
+    border-radius: 16px;
+    border: 1px solid #6c6c6c;
+    background: #2e2e2e;
+    text-align: left;
   }
 }
 
 .itemActive {
   color: #fff;
+
+  .modalBottomSheet & {
+    border: none;
+    background: linear-gradient(90deg, #243d2b 0%, #1f3e27 100%);
+  }
 }
 
 .dot {
@@ -83,12 +121,26 @@
   border-radius: 50%;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
   flex-shrink: 0;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+
+  .modalBottomSheet & {
+    width: 10px;
+    height: 10px;
+    border: none;
+    background: transparent;
+  }
 }
 
 .dotActive {
   background: #00ba3d;
   border-color: #00ba3d;
+
+  .modalBottomSheet & {
+    background: #00ba3d;
+    border-color: #00ba3d;
+  }
 }
 
 .confirmBtn {
@@ -103,11 +155,24 @@
   font-size: 16px;
   font-weight: 500;
   color: #fff;
-  background: radial-gradient(circle at 0% 100%, #00ba3d, transparent 40%),
+  background:
+    radial-gradient(circle at 0% 100%, #00ba3d, transparent 40%),
     radial-gradient(circle at 100% 0%, #00ba3d, transparent 40%), #01521d;
   transition: opacity 0.2s;
 
   &:hover {
     opacity: 0.9;
+  }
+
+  .modalBottomSheet & {
+    width: 100%;
+    margin: 0;
+    padding: 16px 20px;
+    border-radius: 20px;
+    font-size: 20px;
+    font-weight: 500;
+    background:
+      radial-gradient(circle at 0% 100%, #00ba3d, transparent 40%),
+      radial-gradient(circle at 100% 0%, #00ba3d, transparent 40%), #01521d;
   }
 }

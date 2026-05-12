@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Icon } from '@/components/UI/Icon/Icon'
 import styles from './LanguageModal.module.scss'
 
 interface Language {
@@ -16,7 +17,37 @@ interface Props {
   onClose: () => void
 }
 
-export function LanguageModal({ languages, selected, title, confirmLabel, onSelect, onConfirm, onClose }: Props) {
+const MOBILE_MQ = '(max-width: 767px)'
+
+export function LanguageModal({
+  languages,
+  selected,
+  title,
+  confirmLabel,
+  onSelect,
+  onConfirm,
+  onClose,
+}: Props) {
+  const [isBottomSheet, setIsBottomSheet] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(MOBILE_MQ).matches,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_MQ)
+    const sync = () => setIsBottomSheet(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [])
+
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [])
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -26,14 +57,23 @@ export function LanguageModal({ languages, selected, title, confirmLabel, onSele
   }, [onClose])
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`${styles.overlay} ${isBottomSheet ? styles.overlayBottomSheet : ''}`}
+      onClick={isBottomSheet ? undefined : onClose}
+    >
+      <div
+        className={`${styles.modal} ${isBottomSheet ? styles.modalBottomSheet : ''}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={styles.header}>
           <span className={styles.title}>{title}</span>
-          <button type='button' className={styles.closeBtn} onClick={onClose} aria-label='Close'>
-            <svg width='20' height='20' viewBox='0 0 20 20' fill='none'>
-              <path d='M15 5L5 15M5 5l10 10' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' />
-            </svg>
+          <button
+            type='button'
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label='Close'
+          >
+            <Icon id='close' width={40} height={40} />
           </button>
         </div>
 
@@ -46,7 +86,9 @@ export function LanguageModal({ languages, selected, title, confirmLabel, onSele
                 onClick={() => onSelect(lang.code)}
               >
                 <span>{lang.label}</span>
-                <span className={`${styles.dot} ${lang.code === selected ? styles.dotActive : ''}`} />
+                <span
+                  className={`${styles.dot} ${lang.code === selected ? styles.dotActive : ''}`}
+                />
               </button>
             </li>
           ))}

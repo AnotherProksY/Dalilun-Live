@@ -1,7 +1,5 @@
 .root {
   flex-shrink: 0;
-  background: #030303;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 10;
 }
 
@@ -9,140 +7,38 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 40px;
-  max-width: 1440px;
+  padding-block: 22px;
+  padding-inline: 0;
+  max-width: 1920px;
   margin: 0 auto;
 
-  @media (min-width: 1480px) {
-    padding: 14px 0;
+  @media (max-width: 2000px) {
+    padding-inline: 40px;
   }
 
-  @media (max-width: 767px) {
-    padding: 12px 20px;
-  }
-}
-
-.logoWrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  flex-shrink: 0;
-
-  svg {
-    display: block;
+  @media (max-width: 768px) {
+    padding-block: 20px;
+    padding-inline: 16px;
   }
 }
 
-.liveBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 8px;
-  border-radius: 20px;
-  background: #01521d;
-  font-family: 'Geologica', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  color: #00e04a;
-  letter-spacing: 0.04em;
-  text-transform: lowercase;
-}
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.langWrapper {
-  position: relative;
-}
-
-.langButton {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  cursor: pointer;
-  font-family: 'Geologica', sans-serif;
-  font-size: 15px;
-  font-weight: 400;
-  color: #fff;
-  padding: 8px 12px;
-  transition: background 0.2s;
-  user-select: none;
-  white-space: nowrap;
-
-  &:hover {
-    background: #222;
-  }
-}
-
-.chevron {
+.logoLink {
   display: block;
-  flex-shrink: 0;
-  transition: transform 0.25s ease;
-  transform: rotate(180deg);
-  opacity: 0.6;
 }
 
-.chevronOpen {
-  transform: rotate(0deg);
-}
-
-.dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 6px;
-  list-style: none;
-  min-width: 130px;
-  z-index: 100;
-}
-
-.dropdownItem {
+.logo {
   display: block;
-  width: 100%;
-  padding: 10px 12px;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: 'Geologica', sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: left;
-  transition: background 0.15s, color 0.15s;
-  white-space: nowrap;
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.07);
-    color: #fff;
+  @media (max-width: 500px) {
+    width: 146px;
+    height: 32px;
   }
 }
 
-.dropdownItemActive {
-  background: rgba(0, 186, 61, 0.18);
-  color: #fff;
-  font-weight: 500;
-
-  &:hover {
-    background: rgba(0, 186, 61, 0.24);
-  }
-}
-
-.ctaBtn {
-  font-size: 15px !important;
-  padding: 10px 20px !important;
-  border-radius: 12px !important;
-
-  @media (max-width: 480px) {
-    display: none;
+.ctaButton {
+  @media (max-width: 500px) {
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 18px;
   }
 }
