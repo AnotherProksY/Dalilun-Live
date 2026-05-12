@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 const API_BASE = 'https://streaming.itlinuxsolutions.com/api'
 const POLL_INTERVAL = 100
 
-interface AudioItem {
+interface QueueItem {
   buffer: string // base64
 }
 
@@ -21,10 +21,10 @@ export interface PollState {
 }
 
 function base64ToBlob(b64: string): Blob {
-  const bytes = atob(b64)
-  const arr = new Uint8Array(bytes.length)
-  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i)
-  return new Blob([arr], { type: 'audio/mpeg' })
+  const binary = atob(b64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+  return new Blob([bytes], { type: 'audio/mpeg' })
 }
 
 export function useTranslationPoll(agentId: string): PollState {
@@ -39,7 +39,7 @@ export function useTranslationPoll(agentId: string): PollState {
   const abortRef = useRef<AbortController | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const queueRef = useRef<AudioItem[]>([])
+  const queueRef = useRef<QueueItem[]>([])
   const playingRef = useRef(false)
   const lastAudioIdRef = useRef('')
   const currentRef = useRef<CurrentAudio | null>(null)
@@ -50,6 +50,11 @@ export function useTranslationPoll(agentId: string): PollState {
     if (!unlockedRef.current) return
 
     const item = queueRef.current.shift()!
+    if (!item.buffer) {
+      playNext()
+      return
+    }
+
     playingRef.current = true
 
     const blob = base64ToBlob(item.buffer)
@@ -69,7 +74,7 @@ export function useTranslationPoll(agentId: string): PollState {
     el.play().catch(done)
   }, [])
 
-  // When agentId changes — flush queue and stop current audio
+  // When agentId changes — flush queue and stop current playback
   useEffect(() => {
     queueRef.current = []
     lastAudioIdRef.current = ''
@@ -95,19 +100,31 @@ export function useTranslationPoll(agentId: string): PollState {
           { signal: abortRef.current.signal },
         )
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const data = await res.json()
+        const data: {
+          text: string
+          elapsed: number
+          audio: {
+            elapsed: number
+            text: string
+            audioId: string
+            audioBuffer: string
+          }
+        } = await res.json()
 
         if (!stopped) {
           setText(data.text ?? '')
           setElapsed(data.elapsed ?? null)
           setActive(Boolean(data.text))
 
-          const audioId: string | undefined = data.audio?.audioId
-          const audioBuffer: string | undefined = data.audio?.audioBuffer
-          if (audioId && audioBuffer && audioId !== lastAudioIdRef.current) {
-            lastAudioIdRef.current = audioId
-            queueRef.current.push({ buffer: audioBuffer })
-            playNext()
+          // Mirror original logic: skip audio tracking entirely when not unlocked.
+          // This ensures the first chunk after unlock is always treated as "new".
+          const { audioId, audioBuffer } = data.audio
+          if (audioId && audioBuffer && unlockedRef.current) {
+            if (audioId !== lastAudioIdRef.current) {
+              lastAudioIdRef.current = audioId
+              queueRef.current.push({ buffer: audioBuffer })
+              playNext()
+            }
           }
         }
       } catch {
