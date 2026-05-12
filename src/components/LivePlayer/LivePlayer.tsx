@@ -3,9 +3,9 @@ import styles from './LivePlayer.module.scss'
 
 /** Замените на реальные embed-URL по языкам. */
 const STREAM_URLS = {
-  ru: 'https://example.com/stream-placeholder-ru',
-  en: 'https://example.com/stream-placeholder-en',
-  tt: 'https://example.com/stream-placeholder-tt',
+  ru: 'https://vdo.ninja/?whepplay=https://cae1.meshcast.io/whep/CutGrew694497&autostart&transparent',
+  en: 'https://vdo.ninja/?whepplay=https://cae1.meshcast.io/whep/CutGrew694497&autostart&transparent',
+  tt: 'https://vdo.ninja/?whepplay=https://cae1.meshcast.io/whep/CutGrew694497&autostart&transparent',
 } as const
 
 type StreamLang = keyof typeof STREAM_URLS
