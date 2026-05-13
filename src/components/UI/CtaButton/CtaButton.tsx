@@ -5,6 +5,8 @@ interface CtaButtonBaseProps {
   children: ReactNode
   className?: string
   onClick?: MouseEventHandler<HTMLElement>
+  target?: string
+  rel?: string
 }
 
 interface CtaButtonAsButton extends CtaButtonBaseProps {
@@ -15,8 +17,6 @@ interface CtaButtonAsButton extends CtaButtonBaseProps {
 
 interface CtaButtonAsLink extends CtaButtonBaseProps {
   href: string
-  target?: string
-  rel?: string
   type?: never
   disabled?: never
 }
