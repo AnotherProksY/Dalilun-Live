@@ -14,8 +14,10 @@ interface CurrentAudio {
 }
 
 export interface PollState {
-  /** Updates only when a new audio chunk starts playing (audioText in original) */
+  /** Currently-playing chunk's subtitle — updates at audio.play() */
   text: string
+  /** All completed chunks, oldest first */
+  history: string[]
   active: boolean
   audioUnlocked: boolean
   unlockAudio: () => void
@@ -29,12 +31,15 @@ function base64ToBlob(b64: string): Blob {
 }
 
 export function useTranslationPoll(agentId: string): PollState {
-  // audioText: only changes at the moment audio.play() is called
   const [text, setText] = useState('')
+  const [history, setHistory] = useState<string[]>([])
   const [audioUnlocked, setAudioUnlocked] = useState(false)
 
   const agentIdRef = useRef(agentId)
   agentIdRef.current = agentId
+
+  // Tracks the currently displayed text so playNext() can push it to history
+  const currentTextRef = useRef('')
 
   const abortRef = useRef<AbortController | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -55,7 +60,13 @@ export function useTranslationPoll(agentId: string): PollState {
       return
     }
 
-    // Update subtitle exactly here — same moment as original #playNext()
+    // Push previous chunk to history before showing the new one
+    if (currentTextRef.current) {
+      const prev = currentTextRef.current
+      setHistory((h) => [...h, prev])
+    }
+
+    currentTextRef.current = item.text
     setText(item.text)
 
     playingRef.current = true
@@ -77,11 +88,13 @@ export function useTranslationPoll(agentId: string): PollState {
     el.play().catch(done)
   }, [])
 
-  // When agentId changes — flush queue, stop playback, clear subtitle
+  // When agentId changes — flush queue, stop playback, clear history
   useEffect(() => {
     queueRef.current = []
     lastAudioIdRef.current = ''
+    currentTextRef.current = ''
     setText('')
+    setHistory([])
     if (currentRef.current) {
       currentRef.current.el.pause()
       URL.revokeObjectURL(currentRef.current.url)
@@ -116,8 +129,6 @@ export function useTranslationPoll(agentId: string): PollState {
         } = await res.json()
 
         if (!stopped) {
-          // Skip audio tracking entirely when not unlocked —
-          // ensures the first chunk after unlock is always treated as "new".
           const { audioId, audioBuffer, text: audioText } = data.audio
           if (audioId && audioBuffer && unlockedRef.current) {
             if (audioId !== lastAudioIdRef.current) {
@@ -151,5 +162,11 @@ export function useTranslationPoll(agentId: string): PollState {
     playNext()
   }, [playNext])
 
-  return { text, active: Boolean(text), audioUnlocked, unlockAudio }
+  return {
+    text,
+    history,
+    active: Boolean(text),
+    audioUnlocked,
+    unlockAudio,
+  }
 }

@@ -17,6 +17,10 @@
     overflow: visible;
     padding: 0 16px;
   }
+
+  @media (max-width: 1023px) {
+    padding-bottom: 24px;
+  }
 }
 
 .main {

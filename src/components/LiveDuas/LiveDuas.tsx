@@ -27,7 +27,8 @@ export function LiveDuas() {
     ? i18n.language
     : 'ru'
 
-  const { text, active, audioUnlocked, unlockAudio } = useTranslationPoll(agentId)
+  const { text, history, active, audioUnlocked, unlockAudio } =
+    useTranslationPoll(agentId)
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768)
@@ -49,12 +50,11 @@ export function LiveDuas() {
     return () => document.removeEventListener('mousedown', onOutside)
   }, [dropdownOpen])
 
-  // Auto-scroll to bottom when new text arrives
+  // Auto-scroll to bottom whenever history or current text changes
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-    }
-  }, [text])
+    const el = scrollRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [history, text])
 
   const currentLang =
     LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[1]
@@ -77,6 +77,8 @@ export function LiveDuas() {
     void i18n.changeLanguage(pendingLang)
     setModalOpen(false)
   }
+
+  const hasContent = history.length > 0 || active
 
   return (
     <>
@@ -120,9 +122,20 @@ export function LiveDuas() {
           </div>
         </div>
 
-        <div className={styles.textShell} ref={scrollRef}>
-          {active ? (
-            <p className={styles.translationText}>{text}</p>
+        <div className={styles.listShell} ref={scrollRef}>
+          {hasContent ? (
+            <ul className={styles.list}>
+              {history.map((item, i) => (
+                <li key={i} className={styles.item}>
+                  <p className={styles.itemText}>{item}</p>
+                </li>
+              ))}
+              {active && (
+                <li className={`${styles.item} ${styles.itemCurrent}`}>
+                  <p className={styles.itemText}>{text}</p>
+                </li>
+              )}
+            </ul>
           ) : (
             <p className={styles.placeholder}>
               <span className={styles.dot} />
