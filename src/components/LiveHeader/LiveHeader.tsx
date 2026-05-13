@@ -15,7 +15,7 @@ export function LiveHeader() {
             <span className={styles.livePing} aria-hidden='true' />
           </span>
         </a>
-        <CtaButton href='/' className={styles.ctaButton}>{t('live.aboutProject')}</CtaButton>
+        <CtaButton href='https://dalilunfaith.tech/' target='_blank' rel='noopener noreferrer' className={styles.ctaButton}>{t('live.aboutProject')}</CtaButton>
       </div>
     </header>
   )

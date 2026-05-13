@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { LiveHeader } from '@/components/LiveHeader/LiveHeader'
-import { LiveFooter } from '@/components/LiveFooter/LiveFooter'
+// import { LiveFooter } from '@/components/LiveFooter/LiveFooter'
 import styles from '@/layouts/MainLayout/MainLayout.module.scss'
 
 interface Props {
@@ -12,7 +12,7 @@ export function MainLayout({ children }: Props) {
     <div className={styles.layout}>
       <LiveHeader />
       <main className={styles.main}>{children}</main>
-      <LiveFooter />
+      {/* <LiveFooter /> */}
     </div>
   )
 }
